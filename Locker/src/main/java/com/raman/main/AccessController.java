@@ -62,6 +62,31 @@ public class AccessController implements EventHandler<ActionEvent>
 	}
 	
 	/**
+	 * <h1> Analizing and Responding to User Password </h1>
+	 * <p> 
+	 * 		Once the user provided a valid password in the prompt and click confirm, this method has the duty of validation.
+	 * 		On password correction it loads the program main entry screen otherwise an toasted error message is thrown.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return boolean Whether the password is valid or not.
+	 */
+	private void checkUserPasswordAndLoadApplication()
+	{
+		String getUserPassword = passwordController.getPassword();
+		if(verfiyPassword(getUserPassword))
+		{
+			//Password is correct start the application
+			Application_Entry.getInstance().initaiteApplication();
+			return;
+		}
+		//Clean the current user inputs
+		passwordController.cleanUp();
+		//Define the details of the toast message.
+		showToastMessage("Incorrect Password", "The password entered doesn't seem to be valid, seek the developer.",
+				new ToastButton[]{ToastButton.RERTRY});
+	}	
+	
+	/**
 	 * <h1> Password Verification </h1>
 	 * <p> 
 	 * 		A plain text is required for this method to compute and validate the given password correction.
