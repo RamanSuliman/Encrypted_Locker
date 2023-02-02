@@ -1,0 +1,62 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.rootPane
+{
+	-fx-background-color: #eae0de;
+	-fx-background-radius: 15;
+}
+
+.txt_file_loaded
+{
+	-fx-font-size: 14;
+}
+
+.panel_header, .panel_footer
+{
+	-fx-padding: 10;
+}
+
+.icon_application{
+    -fx-image: url("icons/logo.png");
+}
+
+.btn_decrypt, .btn_attach, .btn_save_dec, .btn_encrypt, .btn_save_enc{
+	-fx-border-width: 3;
+	-fx-border-radius: 20%;
+	-fx-background-color: transparent;
+	-fx-border-color: #395c59;
+	/* 
+	-fx-background-image: url('icons/info.png'); 
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center center;
+	-fx-background-size: contain;
+	*/
+}
+
+.list-cell:selected{
+	-fx-background-color: red;
+}
+
+.btn_close .image-view {
+    -fx-image: url("icons/ic_close.png");
+}
+.btn_loadFiles .image-view {
+    -fx-image: url("icons/ic_add.png");
+}
+.btn_removeSelected .image-view {
+    -fx-image: url("icons/ic_checked.png");
+}
+.btn_removeAll .image-view {
+    -fx-image: url("icons/ic_remove.png");
+}
+.btn_minimise .image-view {
+    -fx-image: url("icons/ic_minimize.png");
+}
+.btn_undo .image-view {
+    -fx-image: url("icons/ic_undo.png");
+}
+
+.btn_close, .btn_minimise, .btn_close, .btn_loadFiles,
+	 .btn_removeSelected, .btn_removeAll, .btn_minimise, .btn_undo {
+	-fx-background-color: transparent;
+}

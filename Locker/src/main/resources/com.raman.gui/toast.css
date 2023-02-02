@@ -1,0 +1,23 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.rootPane
+{
+	-fx-background-color: #eae0de;
+	-fx-background-radius: 15;
+}
+
+.panel_header
+{
+	-fx-background-radius:  15 15 0 0;
+}
+
+.panel_body
+{
+	 
+}
+
+.footer_panel
+{
+	/* -fx-background-color: #e2f92f; */
+}
+
