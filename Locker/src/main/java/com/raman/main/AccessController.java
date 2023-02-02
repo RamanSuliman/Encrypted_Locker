@@ -1,6 +1,7 @@
 package com.raman.main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -172,6 +173,46 @@ public class AccessController implements EventHandler<ActionEvent>
 					new ToastButton[]{ToastButton.OK});
 		}
 		return 0;
+	}
+	
+	/**
+	 * <h1> Decrease Remaining Attempts</h1>
+	 * <p> 
+	 * 		On every valid password entry taking place this method is called to reduce the total remaining attempts by 1.
+	 * 		It takes the index value representing the line of which the password is used and the new reduced attempts.
+	 * </p>
+	 * @param int The index of target line within the file.
+	 * @param int The new number of allowed password usage.
+	 * @return int The remaining attempts of given hash.
+	 */
+	private void decreaseNumberOfAttempts(int index, int attempts)
+	{
+		File file = new File("binary.txt");
+	    try (BufferedReader reader = new BufferedReader(new FileReader(file))) 
+	    {
+	      String line;
+	      int currentLine = 1;
+	      StringBuilder fileContent = new StringBuilder();
+	      while ((line = reader.readLine()) != null) 
+	      {
+		        if (currentLine == index) 
+		        {
+		        	//Update the number of attempts
+		        	int attemptsIndex = line.lastIndexOf(",");
+		        	line = line.substring(0, attemptsIndex + 1) + attempts;
+		        }
+		        //Add the line into string builder with a new line.
+		        fileContent.append(line).append(System.lineSeparator());
+		        currentLine++;
+	      }
+	      try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
+	    	  writer.write(fileContent.toString());
+	      }
+	    } catch (IOException e) {
+	    	showToastMessage("Counter Reduction", "Configuration files are missing core data, report this error.",
+					new ToastButton[]{ToastButton.OK});
+	      e.printStackTrace();
+	    }
 	}
 	
 	private void showToastMessage(String title, String message, ToastButton[] buttons)
