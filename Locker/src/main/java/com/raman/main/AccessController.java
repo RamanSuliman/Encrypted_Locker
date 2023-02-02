@@ -147,6 +147,33 @@ public class AccessController implements EventHandler<ActionEvent>
 		return null;
 	}
 	
+	/**
+	 * <h1> Extracting Remaining Attempts</h1>
+	 * <p> 
+	 * 		This function is called during the hash reading process of the local file. It passed with a single line, this
+	 * 		line is filtered to extract and return the last integer value by the end of the line.
+	 * </p>
+	 * @param String The hash line.
+	 * @return int The remaining attempts of given hash.
+	 */
+	private int fetchNumberOfAttempts(String passowrd)
+	{
+		try {
+		    int lastCommaIndex = passowrd.lastIndexOf(",");
+		    if (lastCommaIndex == -1) 
+		    	return 0;
+		    else 
+		    {
+		      String attempts = passowrd.substring(lastCommaIndex + 1);
+		      return Integer.parseInt(attempts);
+		    }
+		}catch (Exception e) {
+			showToastMessage("Counter Missing", "Configuration files have been curropted, try loading the program from scratch.",
+					new ToastButton[]{ToastButton.OK});
+		}
+		return 0;
+	}
+	
 	private void showToastMessage(String title, String message, ToastButton[] buttons)
 	{
 		//Define the details of the toast message.
