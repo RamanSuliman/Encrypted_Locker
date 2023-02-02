@@ -1,8 +1,12 @@
 package com.raman.main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
 import com.raman.gui.toast.Toast;
@@ -12,6 +16,7 @@ import hashing.Hashing;
 import hashing.Hashing.Algorithms;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import raman.Converter.BinarySystemConverter;
@@ -28,11 +33,17 @@ public class AccessController implements EventHandler<ActionEvent>
 		passwordController = new PasswordPromptController(primaryStage, this);
 		hasher = new Hashing(Algorithms.SHA_512);
 		//Initiate the toast message
-		//Get an instance for the toast message.
 		toast = Toast.getInstance();
 		toast.setParentSatge(primaryStage, new ToastActionHandler());
+		//Create list of allowed passwords
+		createPasswordFiles();
 	}
-
+	
+	public Scene getScene()
+	{
+		return passwordController.getScene();
+	}
+	
 	@Override
 	public void handle(ActionEvent event) 
 	{
@@ -66,7 +77,8 @@ public class AccessController implements EventHandler<ActionEvent>
 	    	  writer.close();	    	  
 	      } 
 	    } catch (IOException e) {
-	    	System.out.println("Error in password file creation.");
+	    	showToastMessage("Error", "Credtionals seems to be faild at the building stage, seek the developer.",
+					new ToastButton[]{ToastButton.OK});
 	      e.printStackTrace();
 	    }
 	}
@@ -96,6 +108,50 @@ public class AccessController implements EventHandler<ActionEvent>
 			passwords[i] = plaintext;
 		}		
 		return passwords;
+	}
+	
+	/**
+	 * <h1> Loading Hashed Password </h1>
+	 * <p> 
+	 * 		On every program launch, the method is triggered to read and load hashed passwords from the local file.
+	 * 		The loaded list is stored in the private HashMap property.
+	 * </p>
+	 * @return HashMap<String, Integer> String value represents the hash and integer the number of remaining attempts.
+	 */
+	private Map<String, Integer> getHashesFromFile()
+	{
+		File file = new File("binary.txt");
+		if (file.exists()) 
+		{
+			BufferedReader reader;
+			String line = "";
+			try 
+			{
+				reader = new BufferedReader(new FileReader(file));
+				Map<String, Integer> passwords = new HashMap<String, Integer>();
+				while((line = reader.readLine()) != null)
+				{
+					int attempts = fetchNumberOfAttempts(line);
+					//Remove the attempts from the line
+					line = line.substring(0,line.lastIndexOf(","));
+					passwords.put(line, attempts);
+				}
+				reader.close();
+				return passwords;
+			} catch (IOException e) {
+				showToastMessage("Credtional Error", "Configuration files have been curropted, how about asking for some help?",
+						new ToastButton[]{ToastButton.OK});
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	private void showToastMessage(String title, String message, ToastButton[] buttons)
+	{
+		//Define the details of the toast message.
+		toast.loadToast("HiIIII", message, buttons);
+		toast.show();
 	}
 	
 	// ############################# Toast Handler #############################
