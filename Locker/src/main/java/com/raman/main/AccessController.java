@@ -55,6 +55,63 @@ public class AccessController implements EventHandler<ActionEvent>
 			System.out.println("Confirm");
 	}
 	
+	private boolean isAdmin(String password)
+	{
+		String admin = "Code.me231!";
+		return password.equals(admin);
+	}
+	
+	/**
+	 * <h1> Password Verification </h1>
+	 * <p> 
+	 * 		A plain text is required for this method to compute and validate the given password correction.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return boolean Whether the password is valid or not.
+	 */
+	private boolean verfiyPassword(String password)
+	{
+		//If given password is Admin authority.
+		if(isAdmin(password))
+			return true;
+		//Hashing user password.
+		String hashedPassword = hashPassword(password);
+		//Indexer to locate the index number of the correct password within the list.
+		int indexer = 0;
+		//Maping over the list of hashed passwords along to the remaining allowed attempts as integer.
+		for(Map.Entry<String, Integer> passwordFile : getHashesFromFile().entrySet())
+		{
+			if(passwordFile.getKey().equals(hashedPassword))
+			{
+				if(passwordFile.getValue() <= 0)
+				{
+					showToastMessage("Expired Credtional", "You have used enough of the granted previllage, seek the developer for extention.",
+							new ToastButton[]{ToastButton.OK});
+					return false;
+				}					
+				indexer++;
+				//Decrease the number of attempts
+				decreaseNumberOfAttempts(indexer, (passwordFile.getValue() - 1));
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * <h1> Hashing Plain Password </h1>
+	 * <p> 
+	 * 		On every password hashing task is method is triggered, it takes in a plain text and return a hexa hashed value.
+	 * 		The initial hashing process returns an array of byte[] which is then converted into hex format.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return String The hexadecimal value of the hash.
+	 */
+	private String hashPassword(String userPassword)
+	{
+		return BinarySystemConverter.convert_bytes_array_to_hex(hasher.get_hash(userPassword));
+	}
+	
 	/**
 	 * <h1> Creating Local Passwords Storing File </h1>
 	 * <p> 
