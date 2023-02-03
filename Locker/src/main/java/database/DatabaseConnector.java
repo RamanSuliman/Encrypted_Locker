@@ -88,4 +88,37 @@ public class DatabaseConnector
 		}
 		return false;
 	}
+	
+	
+	public String getAdminPassword()
+	{
+		String sql = "SELECT password FROM users WHERE id = ?";
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, 1);
+			ResultSet result = statement.executeQuery();
+			if(result.next())
+				return result.getString("password");
+		} catch (SQLException e) {
+			System.out.println("(Boss Access) Database access error occursor this method is called on a closed connection");
+		}
+		return "";
+	}
+	
+	public int getPasswordAttempts(String password)
+	{
+		String sql = "SELECT attempts FROM users WHERE password = ?";
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, password);
+			ResultSet result = statement.executeQuery();
+			if(result.next())
+				return result.getInt("attempts");
+		} catch (SQLException e) {
+			System.out.println("(Boss Access) Database access error occursor this method is called on a closed connection");
+		}
+		return 0;
+	}
 }
