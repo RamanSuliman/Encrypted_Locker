@@ -67,6 +67,69 @@ public class AccessController implements EventHandler<ActionEvent>
 			checkUserPasswordAndLoadApplication();
 	}
 	
+	/**
+	 * <h1> Analyzing and Responding to User Password </h1>
+	 * <p> 
+	 * 		Once the user provided a valid password in the prompt and click confirm, this method has the duty of validation.
+	 * 		On password correction it loads the program main entry screen otherwise an toasted error message is thrown.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return boolean Whether the password is valid or not.
+	 */
+	private void checkUserPasswordAndLoadApplication()
+	{
+		String getUserPassword = passwordController.getPassword();
+		//Hashing user password.
+		String hashedPassword = hashPassword(getUserPassword);
+		//Validate user password.
+		if(verfiyPassword(hashedPassword))
+		{
+			//Check if the password has any attempts remaining;
+			if(database.getPasswordAttempts(hashedPassword) > 0)
+			{
+				//Decrease the password attempt by 1;
+				if(!database.updatePasswordAttempt(hashedPassword))
+				{
+					showToastMessage("Attempts Update", "An error occured, please try relaunching with trying with same password if "
+							+ "same error showed then contact the developer.", new ToastButton[] {ToastButton.OK});
+					System.exit(0);
+					return;
+				}
+			}else {
+				showToastMessage("Expired Credtional", "You have used enough of the granted privilege, seek the developer for an extension.",
+						new ToastButton[]{ToastButton.OK});
+				passwordController.cleanUp();
+				return;
+			}
+			//Password is correct start the application
+			Application_Entry.getInstance().initaiteApplication();
+			return;
+		}
+		//Clean the current user inputs
+		passwordController.cleanUp();
+		//Define the details of the toast message.
+		showToastMessage("Incorrect Password", "The password entered doesn't seem to be valid re-try or seek the developer.",
+				new ToastButton[]{ToastButton.RERTRY});
+	}	
+
+	/**
+	 * <h1> Password Verification </h1>
+	 * <p> 
+	 * 		A plain text is required for this method to compute and validate the given password correction.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return boolean Whether the password is valid or not.
+	 */
+	private boolean verfiyPassword(String password)
+	{	
+		//If given password is Admin authority.
+		if(isAdmin(password))
+			return true;
+		if(database.checkIfPasswordExist(password))
+			return true;
+		return false;
+	}
+	
 	private void checkNetworkConnection()
 	{
 		try {
@@ -171,6 +234,26 @@ public class AccessController implements EventHandler<ActionEvent>
 
 		@Override
 		public void onComplete() {}	
+	}
+	
+	private void generatePasswords()
+	{
+		String[] passwords = new String[]{"Delegator.4861", "Raman231!", "Aras231!", "Raskon231!", "Ramon231!", "Kristo231!",
+				"Omar231!", "Ahmad231!", "Adam231!", "Mohammad231!", "Coder231!", "Privacy231!",
+				"Monday231!", "Helen231!", "Jaber231!", "Java231!", "Salford231!", "Manchester231!",
+				"London231!", "Syria231!", "Kurd231!", "University231!","Sara231!", "Kotlin231!", "PHPP231!", "Swift231!", "Test231!"};
+		
+		String chipherText = "";
+		
+		for(int i = 0; i < passwords.length; i++)
+		{
+			chipherText = hashPassword(passwords[i]);
+			if(!database.insertNewUser(new User(passwords[i], chipherText)))
+			{
+				System.out.println("Issue with adding new user");
+				return;
+			}			
+		}		
 	}
 }
 
