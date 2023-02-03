@@ -1,20 +1,18 @@
 package com.raman.main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Flow;
+import java.util.concurrent.Flow.Subscription;
 
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
 import com.raman.gui.toast.Toast;
 import com.raman.gui.toast.Toast.ToastButton;
 
+import database.DatabaseConnector;
+import database.User;
 import hashing.Hashing;
 import hashing.Hashing.Algorithms;
+import internet.InternetConnectionChecker;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -27,17 +25,20 @@ public class AccessController implements EventHandler<ActionEvent>
 	private PasswordPromptController passwordController;
 	private Hashing hasher;
 	private Toast toast;
-	private final int tnumberOfAttempts = 2;
+	private boolean isInternetAvaliable;
+	private DatabaseConnector database;
+	private String admin;
 	
 	public AccessController(Stage primaryStage)
 	{	
-		passwordController = new PasswordPromptController(primaryStage, this);
-		hasher = new Hashing(Algorithms.SHA_512);
 		//Initiate the toast message
 		toast = Toast.getInstance();
 		toast.setParentSatge(primaryStage, new ToastActionHandler());
-		//Create list of allowed passwords
-		createPasswordFiles();
+		//Connect and create an instance of database.
+		database = new DatabaseConnector();
+		//Once internet is granted, load the password pormpt.
+		passwordController = new PasswordPromptController(primaryStage, this);
+		hasher = new Hashing(Algorithms.SHA_512);
 	}
 	
 	public Scene getScene()
@@ -50,77 +51,14 @@ public class AccessController implements EventHandler<ActionEvent>
 	{
 		Button button = (Button) event.getSource();
 		if(button == passwordController.getCancelButton())
-			System.out.println("Close");
+			System.exit(0);
 		if(button == passwordController.getConfirmButton())
-			System.out.println("Confirm");
+			checkUserPasswordAndLoadApplication();
 	}
 	
 	private boolean isAdmin(String password)
 	{
-		String admin = "Code.me231!";
 		return password.equals(admin);
-	}
-	
-	/**
-	 * <h1> Analizing and Responding to User Password </h1>
-	 * <p> 
-	 * 		Once the user provided a valid password in the prompt and click confirm, this method has the duty of validation.
-	 * 		On password correction it loads the program main entry screen otherwise an toasted error message is thrown.
-	 * </p>
-	 * @param String The plain text password.
-	 * @return boolean Whether the password is valid or not.
-	 */
-	private void checkUserPasswordAndLoadApplication()
-	{
-		String getUserPassword = passwordController.getPassword();
-		if(verfiyPassword(getUserPassword))
-		{
-			//Password is correct start the application
-			Application_Entry.getInstance().initaiteApplication();
-			return;
-		}
-		//Clean the current user inputs
-		passwordController.cleanUp();
-		//Define the details of the toast message.
-		showToastMessage("Incorrect Password", "The password entered doesn't seem to be valid, seek the developer.",
-				new ToastButton[]{ToastButton.RERTRY});
-	}	
-	
-	/**
-	 * <h1> Password Verification </h1>
-	 * <p> 
-	 * 		A plain text is required for this method to compute and validate the given password correction.
-	 * </p>
-	 * @param String The plain text password.
-	 * @return boolean Whether the password is valid or not.
-	 */
-	private boolean verfiyPassword(String password)
-	{
-		//If given password is Admin authority.
-		if(isAdmin(password))
-			return true;
-		//Hashing user password.
-		String hashedPassword = hashPassword(password);
-		//Indexer to locate the index number of the correct password within the list.
-		int indexer = 0;
-		//Maping over the list of hashed passwords along to the remaining allowed attempts as integer.
-		for(Map.Entry<String, Integer> passwordFile : getHashesFromFile().entrySet())
-		{
-			if(passwordFile.getKey().equals(hashedPassword))
-			{
-				if(passwordFile.getValue() <= 0)
-				{
-					showToastMessage("Expired Credtional", "You have used enough of the granted previllage, seek the developer for extention.",
-							new ToastButton[]{ToastButton.OK});
-					return false;
-				}					
-				indexer++;
-				//Decrease the number of attempts
-				decreaseNumberOfAttempts(indexer, (passwordFile.getValue() - 1));
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
@@ -134,17 +72,93 @@ public class AccessController implements EventHandler<ActionEvent>
 	 */
 	private String hashPassword(String userPassword)
 	{
-		return BinarySystemConverter.convert_bytes_array_to_hex(hasher.get_hash(userPassword));
+		return BinarySystemConverter.convert_bytes_array_to_hex(hasher.get_hash(userPassword.strip()));
 	}
 	
-	/**
+	// ############################# Toast Handler #############################
+	class ToastActionHandler implements EventHandler<ActionEvent>
+	{
+		@Override
+		public void handle(ActionEvent event) 
+		{
+			Button button = (Button) event.getSource();
+			if((!isInternetAvaliable || database == null || !database.isConnected()) && toast.getExitButton() == button)
+				System.exit(0);
+			else
+				if(toast.getExitButton() == button || toast.getRetryButton() == button || toast.getOKButton() == button)
+					toast.hideToast();
+		}
+	}
+}
+
+
+/*
+ * ############################### Plain Text old solution ##################################
+	
+		public AccessController(Stage primaryStage)
+	{	
+		//Initiate the toast message
+		toast = Toast.getInstance();
+		toast.setParentSatge(primaryStage, new ToastActionHandler());
+		//Initiate the internet listener
+		InternetConnectionChecker networkChecker = InternetConnectionChecker.getInstance();
+		networkChecker.getPublisher().subscribe(new InternetConnectionSnitcher());
+		//Esnure there is an internet conenction prior launching the program.
+		checkNetworkConnection();
+		//Once internet is granted, load the password pormpt.
+		passwordController = new PasswordPromptController(primaryStage, this);
+		hasher = new Hashing(Algorithms.SHA_512);
+		//Create list of allowed passwords
+		createPasswordFiles();
+		//Load hashedValues;
+		listHashedPasswords = getHashesFromFile();
+
+	}
+	
+
+		 * <h1> Password Verification </h1>
+	 * <p> 
+	 * 		A plain text is required for this method to compute and validate the given password correction.
+	 * </p>
+	 * @param String The plain text password.
+	 * @return boolean Whether the password is valid or not.
+	private boolean verfiyPassword(String password)
+	{
+		//If given password is Admin authority.
+		if(isAdmin(password))
+			return true;
+		//Hashing user password.
+		String hashedPassword = hashPassword(password);
+		//Indexer to locate the index number of the correct password within the list.
+		int indexer = listHashedPasswords.size();
+		//Maping over the list of hashed passwords along to the remaining allowed attempts as integer.
+		for(Map.Entry<String, Integer> passwordFile : listHashedPasswords.entrySet())
+		{
+			if(passwordFile.getKey().equals(hashedPassword))
+			{
+				if(passwordFile.getValue() < 1)
+				{
+					showToastMessage("Expired Credtional", "You have used enough of the granted previllage, seek the developer for extention.",
+							new ToastButton[]{ToastButton.OK});
+					return false;
+				}		
+				//Decrease the number of attempts
+				decreaseNumberOfAttempts(indexer, (passwordFile.getValue() - 1));
+				return true;
+			}
+			indexer--;
+			System.out.println("---Key " + passwordFile.getKey() + " " + passwordFile.getValue());
+		}
+		return false;
+	}
+
+		
 	 * <h1> Creating Local Passwords Storing File </h1>
 	 * <p> 
 	 * 		On the initial of the program, this method is triggered to create a plain text file.
 	 * 		The file would be filled with hashed passwords followed by the number of remaining
 	 * 		attempts to be valid.
 	 * </p>
-	 */
 	private void createPasswordFiles()
 	{
 		File file = new File("binary.txt");
@@ -153,9 +167,7 @@ public class AccessController implements EventHandler<ActionEvent>
 	      {
 	    	  FileWriter writer = new FileWriter(file);
 	    	  for(String hashedPassword: getPasswords())
-	    	  {
 	    		  writer.write(hashedPassword + "," + tnumberOfAttempts + "\n");
-	    	  }
 	    	  writer.flush();
 	    	  writer.close();	    	  
 	      } 
@@ -166,7 +178,6 @@ public class AccessController implements EventHandler<ActionEvent>
 	    }
 	}
 	
-	/**
 	 * <h1> Generating Timed Passwords </h1>
 	 * <p> 
 	 * 		On call to this method, a list of strong hard coded passwords will be hashed with SHA-512 algorithm.
@@ -174,7 +185,6 @@ public class AccessController implements EventHandler<ActionEvent>
 	 * 		once only unless the file is removed and the program had to regenerate it.
 	 * </p>
 	 * @return String[] The list of hashed passwords.
-	 */
 	private String[] getPasswords()
 	{
 		String[] passwords = new String[]{"Password231!", "Test231!"};
@@ -193,14 +203,12 @@ public class AccessController implements EventHandler<ActionEvent>
 		return passwords;
 	}
 	
-	/**
 	 * <h1> Loading Hashed Password </h1>
 	 * <p> 
 	 * 		On every program launch, the method is triggered to read and load hashed passwords from the local file.
 	 * 		The loaded list is stored in the private HashMap property.
 	 * </p>
 	 * @return HashMap<String, Integer> String value represents the hash and integer the number of remaining attempts.
-	 */
 	private Map<String, Integer> getHashesFromFile()
 	{
 		File file = new File("binary.txt");
@@ -230,7 +238,6 @@ public class AccessController implements EventHandler<ActionEvent>
 		return null;
 	}
 	
-	/**
 	 * <h1> Extracting Remaining Attempts</h1>
 	 * <p> 
 	 * 		This function is called during the hash reading process of the local file. It passed with a single line, this
@@ -238,7 +245,6 @@ public class AccessController implements EventHandler<ActionEvent>
 	 * </p>
 	 * @param String The hash line.
 	 * @return int The remaining attempts of given hash.
-	 */
 	private int fetchNumberOfAttempts(String passowrd)
 	{
 		try {
@@ -257,7 +263,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		return 0;
 	}
 	
-	/**
+
 	 * <h1> Decrease Remaining Attempts</h1>
 	 * <p> 
 	 * 		On every valid password entry taking place this method is called to reduce the total remaining attempts by 1.
@@ -266,9 +272,9 @@ public class AccessController implements EventHandler<ActionEvent>
 	 * @param int The index of target line within the file.
 	 * @param int The new number of allowed password usage.
 	 * @return int The remaining attempts of given hash.
-	 */
 	private void decreaseNumberOfAttempts(int index, int attempts)
 	{
+		System.out.println("Index " + index + " Attemopts: " + attempts);
 		File file = new File("binary.txt");
 	    try (BufferedReader reader = new BufferedReader(new FileReader(file))) 
 	    {
@@ -296,26 +302,6 @@ public class AccessController implements EventHandler<ActionEvent>
 	      e.printStackTrace();
 	    }
 	}
-	
-	private void showToastMessage(String title, String message, ToastButton[] buttons)
-	{
-		//Define the details of the toast message.
-		toast.loadToast("HiIIII", message, buttons);
-		toast.show();
-	}
-	
-	// ############################# Toast Handler #############################
-	class ToastActionHandler implements EventHandler<ActionEvent>
-	{
-		@Override
-		public void handle(ActionEvent event) 
-		{
-			Button button = (Button) event.getSource();
-			if(toast.getExitButton() == button || toast.getRetryButton() == button || toast.getOKButton() == button){
-				toast.hideToast();
-			}	
-		}
-	}
-}
 
+ ***/
 
