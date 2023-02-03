@@ -44,6 +44,12 @@ public class AccessController implements EventHandler<ActionEvent>
 		//Once internet is granted, load the password pormpt.
 		passwordController = new PasswordPromptController(primaryStage, this);
 		hasher = new Hashing(Algorithms.SHA_512);
+		//Before running any database queries, must check the connection state.
+		checkDatabaseConnection();
+		//Generate list of passwords
+		//generatePasswords();
+		//Retrive admin credentials
+		getAdminCredential();
 	}
 	
 	public Scene getScene()
@@ -72,6 +78,28 @@ public class AccessController implements EventHandler<ActionEvent>
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+	}
+	
+	private void checkDatabaseConnection()
+	{
+		while(!database.isConnected())
+		{
+			showToastMessage("Server is down!", "You are offline or issue occured in the server, try later or contact the developer.",
+					new ToastButton[]{ToastButton.OK});
+			System.exit(0);
+		}
+	}
+	
+	private void getAdminCredential()
+	{
+		if(database.isConnected())
+			return;
+		admin = database.getAdminPassword();
+		if(admin.isEmpty() || admin == null)
+		{
+			checkNetworkConnection();
+			getAdminCredential();
+		}
 	}
 	
 	private boolean isAdmin(String password)
