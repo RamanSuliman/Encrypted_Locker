@@ -56,6 +56,19 @@ public class AccessController implements EventHandler<ActionEvent>
 			checkUserPasswordAndLoadApplication();
 	}
 	
+	private void checkNetworkConnection()
+	{
+		try {
+			Thread.sleep(2000);
+			while(!isInternetAvaliable)
+				showToastMessage("Require Internet Connection", "You are offline, internet conenction is required to processed.",
+						new ToastButton[]{ToastButton.RERTRY});
+			} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
 	private boolean isAdmin(String password)
 	{
 		return password.equals(admin);
@@ -73,6 +86,13 @@ public class AccessController implements EventHandler<ActionEvent>
 	private String hashPassword(String userPassword)
 	{
 		return BinarySystemConverter.convert_bytes_array_to_hex(hasher.get_hash(userPassword.strip()));
+	}
+	
+	private void showToastMessage(String title, String message, ToastButton[] buttons)
+	{
+		//Define the details of the toast message.
+		toast.loadToast("Privacy Locker", message, buttons);
+		toast.show();
 	}
 	
 	// ############################# Toast Handler #############################

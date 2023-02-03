@@ -16,6 +16,7 @@ public class InternetConnectionChecker
 	private InternetConnectionChecker()
 	{
 		publisher = new SubmissionPublisher<>();
+		init();
 	}
 	
 	public static InternetConnectionChecker getInstance()
