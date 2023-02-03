@@ -3,6 +3,7 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseConnector 
@@ -69,6 +70,21 @@ public class DatabaseConnector
 			return (rowsEffected > 0)? true : false;
 		} catch (SQLException e) {
 			System.out.println("(Insert) Database access error occursor this method is called on a closed connection");
+		}
+		return false;
+	}
+	
+	public boolean checkIfPasswordExist(String password)
+	{
+		String sql = "SELECT id FROM users WHERE password = ?";
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, password);
+			ResultSet result = statement.executeQuery();
+			return result.next();
+		} catch (SQLException e) {
+			System.out.println("(Validation) Database access error occursor this method is called on a closed connection");
 		}
 		return false;
 	}
