@@ -34,6 +34,11 @@ public class AccessController implements EventHandler<ActionEvent>
 		//Initiate the toast message
 		toast = Toast.getInstance();
 		toast.setParentSatge(primaryStage, new ToastActionHandler());
+		//Initiate the internet listener
+		InternetConnectionChecker networkChecker = InternetConnectionChecker.getInstance();
+		networkChecker.getPublisher().subscribe(new InternetConnectionSnitcher());
+		//Esnure there is an internet conenction prior launching the program.
+		checkNetworkConnection();
 		//Connect and create an instance of database.
 		database = new DatabaseConnector();
 		//Once internet is granted, load the password pormpt.
@@ -108,6 +113,36 @@ public class AccessController implements EventHandler<ActionEvent>
 				if(toast.getExitButton() == button || toast.getRetryButton() == button || toast.getOKButton() == button)
 					toast.hideToast();
 		}
+	}
+	
+	// ############################# Will receive the connection status updates from SubmissionPublisher. #############################
+	class InternetConnectionSnitcher implements Flow.Subscriber<Boolean>
+	{
+		@Override
+		public void onSubscribe(Subscription subscription) 
+		{
+			subscription.request(Long.MAX_VALUE);
+		}
+
+		//On receival of status update, the onNext method is called
+		@Override
+		public void onNext(Boolean isConnected) 
+		{
+			isInternetAvaliable = isConnected;
+			System.out.println(isConnected);
+			if(!isConnected)
+			{
+				Platform.runLater(()->{
+					checkNetworkConnection();
+				});
+			}
+		}
+
+		@Override
+		public void onError(Throwable throwable) {}
+
+		@Override
+		public void onComplete() {}	
 	}
 }
 
