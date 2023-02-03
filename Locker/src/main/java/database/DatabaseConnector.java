@@ -56,4 +56,20 @@ public class DatabaseConnector
 		}
 		return false;
 	}
+	
+	public boolean insertNewUser(User user)
+	{
+		String sql = "INSERT INTO users (name, password) VALUES (?,?)";
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, user.getName());
+			statement.setString(2, user.getPassword());
+			int rowsEffected = statement.executeUpdate();
+			return (rowsEffected > 0)? true : false;
+		} catch (SQLException e) {
+			System.out.println("(Insert) Database access error occursor this method is called on a closed connection");
+		}
+		return false;
+	}
 }
