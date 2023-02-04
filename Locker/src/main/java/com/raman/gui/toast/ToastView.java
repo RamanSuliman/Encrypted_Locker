@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -89,7 +87,7 @@ public class ToastView extends Stage
 		/*############### Default Message Title ###############*/
 		txt_title = new Label("Error");
 		//Set text color.
-		txt_title.setTextFill(Color.web("#eae0de"));
+			//txt_title.setTextFill(Color.web("#eae0de"));
 		//Set font name, format and size.
 		txt_title.setFont(Font.font("Amble CN", FontWeight.BOLD, 18));
 		//Set CSS class name.
@@ -140,7 +138,7 @@ public class ToastView extends Stage
 		//Make the text to be wrapped meaning extra text is pushed into new line.
 		txt_message.setWrapText(true);
 		//Set txt_message width for the text.
-		txt_title.setMaxWidth(180);
+		  //txt_message.setMaxWidth(180);
 		//Position the text in the middle.
 		txt_message.setAlignment(Pos.CENTER);
 		txt_message.setCursor(Cursor.TEXT);

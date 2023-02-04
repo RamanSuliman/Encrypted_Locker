@@ -125,4 +125,11 @@ public class Toast
         //This shows the current window, show() could'nt be overridden
         view.hideToast();
 	}
+	
+	public void showToastMessage(String title, String message, ToastButton[] buttons)
+	{
+		//Define the details of the toast message.
+		loadToast(title, message, buttons);
+		show();
+	}
 }
