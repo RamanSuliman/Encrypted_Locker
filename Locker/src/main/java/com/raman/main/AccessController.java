@@ -4,6 +4,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.Flow.Subscription;
 
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
+import com.raman.fxfunctions.WindowService;
 import com.raman.gui.toast.Toast;
 import com.raman.gui.toast.Toast.ToastButton;
 
@@ -17,7 +18,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import raman.Converter.BinarySystemConverter;
 
 public class AccessController implements EventHandler<ActionEvent>
@@ -28,6 +31,7 @@ public class AccessController implements EventHandler<ActionEvent>
 	private boolean isInternetAvaliable;
 	private DatabaseConnector database;
 	private String admin;
+	private InternetConnectionChecker networkChecker;
 	
 	public AccessController(Stage primaryStage)
 	{	
@@ -35,7 +39,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		toast = Toast.getInstance();
 		toast.setParentSatge(primaryStage, new ToastActionHandler());
 		//Initiate the internet listener
-		InternetConnectionChecker networkChecker = InternetConnectionChecker.getInstance();
+		networkChecker = InternetConnectionChecker.getInstance();
 		networkChecker.getPublisher().subscribe(new InternetConnectionSnitcher());
 		//Esnure there is an internet conenction prior launching the program.
 		checkNetworkConnection();
@@ -90,17 +94,19 @@ public class AccessController implements EventHandler<ActionEvent>
 				//Decrease the password attempt by 1;
 				if(!database.updatePasswordAttempt(hashedPassword))
 				{
-					showToastMessage("Attempts Update", "An error occured, please try relaunching with trying with same password if "
+					toast.showToastMessage("Attempts Update", "An error occured, please try relaunching with trying with same password if "
 							+ "same error showed then contact the developer.", new ToastButton[] {ToastButton.OK});
 					System.exit(0);
 					return;
 				}
 			}else {
-				showToastMessage("Expired Credtional", "You have used enough of the granted privilege, seek the developer for an extension.",
+				toast.showToastMessage("Expired Credtional", "You have used enough of the granted privilege, seek the developer for an extension.",
 						new ToastButton[]{ToastButton.OK});
 				passwordController.cleanUp();
 				return;
 			}
+			//On success, unsubscribe from network publisher and stop the thread.
+			networkChecker.stop();
 			//Password is correct start the application
 			Application_Entry.getInstance().initaiteApplication();
 			return;
@@ -108,7 +114,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		//Clean the current user inputs
 		passwordController.cleanUp();
 		//Define the details of the toast message.
-		showToastMessage("Incorrect Password", "The password entered doesn't seem to be valid re-try or seek the developer.",
+		toast.showToastMessage("Incorrect Password", "The password entered doesn't seem to be valid re-try or seek the developer.",
 				new ToastButton[]{ToastButton.RERTRY});
 	}	
 
@@ -135,7 +141,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		try {
 			Thread.sleep(2000);
 			while(!isInternetAvaliable)
-				showToastMessage("Require Internet Connection", "You are offline, internet conenction is required to processed.",
+				toast.showToastMessage("Require Internet", "You are offline, internet conenction is required to processed.",
 						new ToastButton[]{ToastButton.RERTRY});
 			} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -147,7 +153,7 @@ public class AccessController implements EventHandler<ActionEvent>
 	{
 		while(!database.isConnected())
 		{
-			showToastMessage("Server is down!", "You are offline or issue occured in the server, try later or contact the developer.",
+			toast.showToastMessage("Server is down!", "You are offline or issue occured in the server, try later or contact the developer.",
 					new ToastButton[]{ToastButton.OK});
 			System.exit(0);
 		}
@@ -184,12 +190,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		return BinarySystemConverter.convert_bytes_array_to_hex(hasher.get_hash(userPassword.strip()));
 	}
 	
-	private void showToastMessage(String title, String message, ToastButton[] buttons)
-	{
-		//Define the details of the toast message.
-		toast.loadToast("Privacy Locker", message, buttons);
-		toast.show();
-	}
+
 	
 	// ############################# Toast Handler #############################
 	class ToastActionHandler implements EventHandler<ActionEvent>
@@ -220,7 +221,7 @@ public class AccessController implements EventHandler<ActionEvent>
 		public void onNext(Boolean isConnected) 
 		{
 			isInternetAvaliable = isConnected;
-			System.out.println(isConnected);
+			//If the connection has lost then stop the user with a toast message until network is back.
 			if(!isConnected)
 			{
 				Platform.runLater(()->{
