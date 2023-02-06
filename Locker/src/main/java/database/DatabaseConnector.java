@@ -24,13 +24,11 @@ public class DatabaseConnector
 	{
 		try {
 			connection = DriverManager.getConnection(PRIMARY_DB_URL, username, password);
-			System.out.println("Connection is granted to the server.");
 		}catch (Exception e) 
 		{
 			System.out.println("Failed to connect with primary server.");
 			try {
 				connection = DriverManager.getConnection(Secondary_DB_URL, username, password);
-				System.out.println("Connection is granted to the backup server.");
 			}catch (Exception e2) 
 			{
 				System.out.println("Failed to connect with backup server.");

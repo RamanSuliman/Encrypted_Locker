@@ -1,4 +1,4 @@
-package com.raman.securitystore;
+package com.raman.security;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,6 +13,7 @@ import com.raman.FileProtector.ProgressMeasure;
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
 
 import encryption.symmetric.PasswordEncryption;
+
 
 public class EncryptionController  
 {
@@ -42,12 +43,12 @@ public class EncryptionController
 			    inputStream.read(inputBytes);
 			    //Fed the bytes of cipher and file name and  into the map.
 			    byte[] decrypted = feedBytesToEncryption(inputBytes);
+			    //Close the file.
+			    inputStream.close();
 			    //If decrypted is null then user password is wrong.
 			    if(decrypted == null)
 			    	return false;
 			    cipherFiles.put(file.getName(), decrypted);
-			    //Close the file.
-			    inputStream.close();
 			    callback.onProgressUpdate(++numberOfFilesEncrypted, "encrypt");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -151,7 +152,7 @@ public class EncryptionController
 		        FileOutputStream outputStream = new FileOutputStream(folderSavePath + "\\" + fileName);
 		        outputStream.write(outputBytes);
 		        outputStream.close();
-		        callback.onProgressUpdate(outputBytes.length, "decrypt");
+		        callback.onProgressUpdate(outputBytes.length, "decrypt");        
 		    }
 		    reader.close();
 		    sourceStream.close();

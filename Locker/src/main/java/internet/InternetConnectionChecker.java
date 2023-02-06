@@ -39,12 +39,11 @@ public class InternetConnectionChecker
 					boolean isConnected = checkConnection();
 					if(isConnected != latestConnectionState)
 					{
-						System.out.println(isConnected);
 						latestConnectionState = isConnected;
 						publisher.submit(isConnected);
 					}
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					}catch (InterruptedException  e){
 						System.out.println("Network thread is interrupted.");
 						break;
@@ -58,7 +57,7 @@ public class InternetConnectionChecker
 	{
 		try {
 			InetAddress address = InetAddress.getByName("www.google.com");
-			return address.isReachable(3500);
+			return address.isReachable(2000);
 		}catch (UnknownHostException  e) {
 			System.out.println("Host not found when checking connection.");
 		}catch (Exception e){

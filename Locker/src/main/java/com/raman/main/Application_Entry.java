@@ -35,7 +35,6 @@ public class Application_Entry extends Application
 	        primaryStage.initStyle(StageStyle.TRANSPARENT);
 	        primaryStage.show();
 	        
-	        
 		/*	
 			Prompt prompt = new Prompt();
 			
