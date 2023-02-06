@@ -7,10 +7,9 @@ import java.util.List;
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
 import com.raman.gui.toast.Toast;
 import com.raman.gui.toast.Toast.ToastButton;
-import com.raman.securitystore.EncryptionController;
-import com.raman.securitystore.FilesController;
+import com.raman.security.EncryptionController;
+import com.raman.security.FilesController;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,7 +34,7 @@ public class MainController implements EventHandler<ActionEvent>
 	{
 		view = new MainView(this);
 	}
-	
+
 	public void init(String taskType)
 	{
 		//Define a task type.
@@ -106,9 +105,8 @@ public class MainController implements EventHandler<ActionEvent>
 			}else
 			{
 				//Define the details of the toast message.
-				toast.loadToast("Missing Files", "Make sure files are loaded first prior proceeding with encryption.",
+				toast.showToastMessage("Missing Files", "Make sure files are loaded first prior proceeding with encryption.",
 						new ToastButton[]{ToastButton.OK});
-				toast.show();
 			}
 		}else if(view.btn_save_enc == button){
 			if(fileController.saveEncryptedFile())
@@ -130,7 +128,6 @@ public class MainController implements EventHandler<ActionEvent>
 				fileController.removeFileAt(indexOfSelectedItem);
 			}
 		}else if(view.btn_undo == button){
-			System.out.println("Undo clicked! " + indexOfSelectedItem);
 			view.undo(indexOfSelectedItem, fileController.getLastDeletedFile());
 			fileController.undo(indexOfSelectedItem);
 			//To prevent removing another item again after undoing last action.
@@ -140,8 +137,13 @@ public class MainController implements EventHandler<ActionEvent>
 		else if(view.btn_close == button){
 			Platform.exit();
 	        System.exit(0);
-		}else
-			System.out.println("Button not recogonised...");
+		}else	
+		{
+			//Define the details of the toast message.
+			toast.showToastMessage("Unsupported Event", "Something unusual occured, refer back to the developer...",
+					new ToastButton[]{ToastButton.OK});
+			System.exit(0);
+		}		
 	}	
 	
 	private void addSelectedFilesToGUI()
@@ -171,10 +173,8 @@ public class MainController implements EventHandler<ActionEvent>
 					else
 					{
 						toast.getOKButton().setOnAction(e -> System.exit(0));
-						//Define the details of the toast message.
-	                    toast.loadToast("Task Failed", "The encryption task faced an issue prior completion, please try again later."
-	                    		,new ToastButton[]{ToastButton.OK});
-						toast.show(); 
+						toast.showToastMessage("Task Failed", "The encryption task faced an issue prior completion, please try again later.",
+								new ToastButton[]{ToastButton.OK});
 					}
 				}
 			});		
@@ -200,7 +200,6 @@ public class MainController implements EventHandler<ActionEvent>
 			String path = fileController.getSavingFolderPath();
 			if(!path.isEmpty())
 			{
-				System.out.println("Chosen folder " + path);
 				//Show the progress bar.
 				view.showProgressBar();
 				Thread thread = new Thread(new Runnable() {
@@ -220,7 +219,6 @@ public class MainController implements EventHandler<ActionEvent>
 							message = "An error occured during the decryption process, please try again.";
 						}
 						toast.getOKButton().setOnAction(e -> System.exit(0));
-						//Define the details of the toast message.
 	                    toast.loadToast(title, message, new ToastButton[]{ToastButton.OK});
 						Platform.runLater(new Runnable() {
 							public void run() {
@@ -233,11 +231,11 @@ public class MainController implements EventHandler<ActionEvent>
 				return;
 			}
 			else{
-				System.out.println("Folder not chosen");
+				toast.showToastMessage("Missing Folder!", "Seems like you have canceled the process.",
+						new ToastButton[]{ToastButton.OK});
 				return;
 			}
 		}
-		System.out.println("Not Loaded");
 	}
 	
 	// ############################# Password Handler #############################
@@ -274,8 +272,7 @@ public class MainController implements EventHandler<ActionEvent>
 					//Clean up the password GUI.
 					passwordPromptController.cleanUp();
 					//Define the details of the toast message.
-                    toast.loadToast(title, message, new ToastButton[]{buttonType});
-					toast.show();  
+                    toast.showToastMessage(title, message, new ToastButton[]{buttonType}); 
 				}
 				else
 				{
@@ -287,7 +284,8 @@ public class MainController implements EventHandler<ActionEvent>
 				}
 			}
 			else
-				System.out.println("Unknown button named: ");
+				toast.showToastMessage("Unknown Input", "Not defined action has been triggered, notify the developer.",
+						new ToastButton[]{ToastButton.CANCEL});
 		}
 
 		private void passwordEventHanderEncryption(Button button)
@@ -307,23 +305,23 @@ public class MainController implements EventHandler<ActionEvent>
 					startEncryption();
 				}
 			}else
-				System.out.println("Unknown button named: ");
+				toast.showToastMessage("Unknown Input", "Not defined action has been triggered, notify the developer.",
+						new ToastButton[]{ToastButton.CANCEL});
 		}
 		
 		@Override
 		public void handle(ActionEvent event) 
 		{
 			Object source = event.getSource();
-			System.out.println(taskType);
 			if(source instanceof Button)
 			{
 				if(taskType.equalsIgnoreCase("Encrypt"))
 					passwordEventHanderEncryption((Button)source);
 				else
 					passwordEventHanderDecryption((Button)source);
-			}
-			else
-				System.out.println("Not button event been triggered");			
+			}else
+				toast.showToastMessage("Unknown Input", "Not defined action has been triggered, notify the developer.",
+						new ToastButton[]{ToastButton.CANCEL});			
 		}			
 	}
 	
@@ -366,7 +364,8 @@ public class MainController implements EventHandler<ActionEvent>
 			if(source instanceof Button)
 				implementToastButtons((Button) source);
 			else
-				System.out.println("Unknown is triggered click event.");	
+				toast.showToastMessage("Unknown Input", "Not defined action has been triggered, notify the developer.",
+						new ToastButton[]{ToastButton.CANCEL});	
 		}
 		
 		private void implementToastButtons(Button button)
