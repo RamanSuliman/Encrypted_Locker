@@ -62,6 +62,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/raman/OneDrive/Pictures/Jar/cryptography.jar"/>
+	<classpathentry kind="lib" path="E:/APIs/cryptography.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

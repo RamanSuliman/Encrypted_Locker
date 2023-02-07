@@ -17,7 +17,7 @@
 }
 
 .icon_application{
-    -fx-image: url("icons/logo.png");
+    -fx-image: url("/com.raman.gui/icons/logo.png");
 }
 
 .btn_decrypt, .btn_attach, .btn_save_dec, .btn_encrypt, .btn_save_enc{
@@ -38,22 +38,22 @@
 }
 
 .btn_close .image-view {
-    -fx-image: url("icons/ic_close.png");
+    -fx-image: url("/com.raman.gui/icons/ic_close.png");
 }
 .btn_loadFiles .image-view {
-    -fx-image: url("icons/ic_add.png");
+    -fx-image: url("/com.raman.gui/icons/ic_add.png");
 }
 .btn_removeSelected .image-view {
-    -fx-image: url("icons/ic_checked.png");
+    -fx-image: url("/com.raman.gui/icons/ic_checked.png");
 }
 .btn_removeAll .image-view {
-    -fx-image: url("icons/ic_remove.png");
+    -fx-image: url("/com.raman.gui/icons/ic_remove.png");
 }
 .btn_minimise .image-view {
-    -fx-image: url("icons/ic_minimize.png");
+    -fx-image: url("/com.raman.gui/icons/ic_minimize.png");
 }
 .btn_undo .image-view {
-    -fx-image: url("icons/ic_undo.png");
+    -fx-image: url("/com.raman.gui/icons/ic_undo.png");
 }
 
 .btn_close, .btn_minimise, .btn_close, .btn_loadFiles,

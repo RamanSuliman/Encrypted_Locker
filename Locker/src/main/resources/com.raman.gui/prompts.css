@@ -27,7 +27,7 @@
 
 .logo
 {
-	-fx-image: url("icons/logo.png");
+	-fx-image: url("/com.raman.gui/icons/logo.png");
 }
 
 .error_messages
