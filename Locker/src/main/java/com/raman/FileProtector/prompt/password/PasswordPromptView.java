@@ -13,8 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,6 +32,8 @@ public class PasswordPromptView extends Stage
 	private VBox root, messages_pane;
 	private Scene scene;
 	
+	private static final int max_pass_length = 15;
+	
 	public PasswordPromptView(Stage ownerWidnow, EventHandler<ActionEvent> eventHandler, ChangeListener<String> passwordHandler) 
 	{
 		this.eventHandler = eventHandler;
@@ -39,7 +43,7 @@ public class PasswordPromptView extends Stage
 		root = new VBox();
 		root.getStyleClass().add("rootPane_password");
 		root.setAlignment(Pos.CENTER);
-		root.setSpacing(4);
+		root.setSpacing(6);
 		//Setting minimum and maximum height for the root, works with the Region... define in the scene.
 		root.setMinHeight(60);
 		root.setMaxHeight(150);	
@@ -68,11 +72,15 @@ public class PasswordPromptView extends Stage
 		passwordField.getStyleClass().add("passwordField");
 		passwordField.setPromptText("Enter your password");
 		passwordField.textProperty().addListener(passwordHandler);
-		
-		
+		//Set characters size limitations
+		passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
+		    if (newValue.length() > max_pass_length) {
+		        passwordField.setText(oldValue);
+		    }
+		});
 		
 		messages_pane = new VBox();
-		messages_pane.setStyle("-fx-padding: 0 0 0 50;");
+		messages_pane.getStyleClass().add("error_messages_container");
 		setErrorMessages(messages_pane);
 		
 		HBox button_container = new HBox();
@@ -117,7 +125,7 @@ public class PasswordPromptView extends Stage
 	
 	public void updateColor(int index, String color) 
 	{
-		messages[index].setStyle("-fx-text-fill:" + color + ";");
+		messages[index].setStyle("-fx-text-fill: rgb(" + color + ");");
 	}
 	
 	protected void reset()
