@@ -1,23 +1,11 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-.rootPane
-{
-	-fx-background-color: #eae0de;
+
+/* ######################## Initial Prompt Window ######################## */
+.initial_window_rootPane{
+	-fx-background-color: #eae0de;  
 	-fx-background-radius: 15;
 	-fx-padding: 0 2 2 2;
-}
-
-.rootPane_password
-{
-	-fx-background-color: #eae0de;
-	-fx-background-radius: 10;
-	-fx-padding: 2 2 2 2;
-}
-
-.txt_welcome
-{
-	-fx-font-size: 14;
-	-fx-text-fill: red;
 }
 
 .btn_encrypt, .btn_decrypt
@@ -30,11 +18,37 @@
 	-fx-image: url("/com.raman.gui/icons/logo.png");
 }
 
+.txt_welcome
+{
+	-fx-font-size: 14;
+	-fx-text-fill: red;
+}
+
+
+/* ######################## Password Prompt Window ######################## */
+
+.rootPane_password
+{
+	/* -fx-background-color: #eae0de;   -fx-opacity: 0.5;  -fx-alignment: 
+	 	-fx-background-image: url("/com.raman.gui/icons/background.jpg");
+  	-fx-background-repeat: stretch;
+ 	-fx-background-position: center center;
+	 * */
+	 
+	-fx-padding: 4;
+ 	-fx-background-color: rgba(68, 83, 115, 1);
+    -fx-border-color: rgba(89, 19, 32, 0.3);
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 15;
+}
+
 .error_messages
 {
-	-fx-prompt-text-fill: red;
+	-fx-prompt-text-fill: rgb(89, 19, 32);
 	-fx-font-family: 'Wingdings';
-	-fx-font-size: 9px;
+	-fx-font-weight: bold ;
+	-fx-font-size: 10px;
 }
 
 .passwordField
@@ -49,4 +63,8 @@
 	-fx-border-radius: 3 3 3 3;
 	-fx-font-family: 'Wingdings';
 	-fx-font-size: 14px;
+}
+
+.btn__password_close, btn_password_confirm{
+	
 }
