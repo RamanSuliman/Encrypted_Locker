@@ -29,7 +29,7 @@ public class Inital_Window
 		
 		//Create the root pane
 		root = new VBox();
-		root.getStyleClass().add("rootPane");
+		root.getStyleClass().add("initial_window_rootPane");
 		root.setSpacing(5);
 		root.setAlignment(Pos.CENTER);
 		//Setting minimum and maximum height for the root, works with the Region... define in the scene.

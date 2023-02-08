@@ -12,6 +12,8 @@ public class PasswordPromptController implements ChangeListener<String>
 {
 	private PasswordPromptView view;
 	public static String password = "";
+	private static final String wrong = "89, 19, 32";
+	private static final String correct = "2, 150, 10";
 	
 	public PasswordPromptController(Stage ownerWindow, EventHandler<ActionEvent> eventhander)
 	{
@@ -41,27 +43,27 @@ public class PasswordPromptController implements ChangeListener<String>
 		
 		if(password.length() < 8){
 			correctAnswers--;
-			view.updateColor(0, "red");
+			view.updateColor(0, wrong);
 		}else
-			view.updateColor(0, "green");
+			view.updateColor(0, correct);
 		
 		if(!password.matches(".*[!@#\\$£%^\\-\\.\\,&\\*]+.*")){
 			correctAnswers--;
-			view.updateColor(3, "red");
+			view.updateColor(3, wrong);
 		}else
-			view.updateColor(3, "green");
+			view.updateColor(3, correct);
 		
 		if(!password.matches(".*[A-Z]+.*")){
 			correctAnswers--;
-			view.updateColor(1, "red");
+			view.updateColor(1, wrong);
 		}else
-			view.updateColor(1, "green");
+			view.updateColor(1, correct);
 			
 		if(!password.matches(".*[0-9]+.*")){
 			correctAnswers--;
-			view.updateColor(2, "red");
+			view.updateColor(2, wrong);
 		}else
-			view.updateColor(2, "green");
+			view.updateColor(2, correct);
 			
 		return (correctAnswers == 4);
 	}
