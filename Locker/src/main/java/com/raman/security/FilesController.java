@@ -79,7 +79,7 @@ public class FilesController
 	
 	public void undo(int index)
 	{
-		if(index > files.size() - 1 || index < 0)
+		if(index > files.size() - 1 || index < 0 || getLastDeletedFile().getName() == null)
 			return;
 		//This will add the file at given position and shift the elements up without replacing.
 		System.out.println("File:" + getLastDeletedFile().getName());
