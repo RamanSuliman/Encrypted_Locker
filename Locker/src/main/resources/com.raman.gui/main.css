@@ -2,8 +2,32 @@
 
 .rootPane
 {
-	-fx-background-color: #eae0de;
-	-fx-background-radius: 15;
+	-fx-padding: 1;
+ 	-fx-background-color: rgba(68, 83, 115, 0.9);
+    -fx-border-color: rgba(89, 19, 32, 0.2);
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 15;
+}
+
+/* ########################  Panels ##########################*/
+
+.panel_header, .panel_footer
+{
+	-fx-padding: 3;
+}
+
+/* ########################  Header ##########################*/
+.icon_application{
+    -fx-image: url("/com.raman.gui/icons/logo.png");
+}
+
+.txt_title{
+	-fx-text-fill: rgb(89, 19, 32);
+	-fx-font-family: 'Amble CN';
+	-fx-font-weight: bold;
+	-fx-font-size: 19px;
+	-fx-padding: 0 0 0 15;
 }
 
 .txt_file_loaded
@@ -11,35 +35,42 @@
 	-fx-font-size: 14;
 }
 
-.panel_header, .panel_footer
-{
-	-fx-padding: 10;
-}
-
-.icon_application{
-    -fx-image: url("/com.raman.gui/icons/logo.png");
-}
-
-.btn_decrypt, .btn_attach, .btn_save_dec, .btn_encrypt, .btn_save_enc{
-	-fx-border-width: 3;
-	-fx-border-radius: 20%;
-	-fx-background-color: transparent;
-	-fx-border-color: #395c59;
-	/* 
-	-fx-background-image: url('icons/info.png'); 
-	-fx-background-repeat: no-repeat;
-	-fx-background-position: center center;
-	-fx-background-size: contain;
-	*/
-}
-
-.list-cell:selected{
-	-fx-background-color: red;
+.btn_minimise .image-view {
+    -fx-image: url("/com.raman.gui/icons/ic_minimize.png");
 }
 
 .btn_close .image-view {
     -fx-image: url("/com.raman.gui/icons/ic_close.png");
 }
+
+.btn_close, .btn_minimise {
+	-fx-background-color: transparent;
+}
+
+.btn_close:hover, .btn_minimise:hover{
+	-fx-cursor: hand;
+}
+
+/* ########################  Body  ##########################*/
+.fileContainer{
+	-fx-background-color: rgba(114, 121, 135, 0.5);
+}
+
+.list-cell:selected{
+	-fx-background-color: rgb(89, 19, 32);
+}
+
+.list-cell{
+	-fx-text-fill: rgb(68, 83, 115);
+	-fx-font-size: 11px;
+}
+
+.txt_file_loaded{
+	-fx-padding: 0 0 10 0;
+	-fx-font-weight: bold;
+	-fx-font-size: 12px;
+}
+
 .btn_loadFiles .image-view {
     -fx-image: url("/com.raman.gui/icons/ic_add.png");
 }
@@ -49,14 +80,33 @@
 .btn_removeAll .image-view {
     -fx-image: url("/com.raman.gui/icons/ic_remove.png");
 }
-.btn_minimise .image-view {
-    -fx-image: url("/com.raman.gui/icons/ic_minimize.png");
-}
+
 .btn_undo .image-view {
     -fx-image: url("/com.raman.gui/icons/ic_undo.png");
 }
 
-.btn_close, .btn_minimise, .btn_close, .btn_loadFiles,
+.btn_loadFiles,
 	 .btn_removeSelected, .btn_removeAll, .btn_minimise, .btn_undo {
 	-fx-background-color: transparent;
+}
+
+.btn_loadFiles:hover, .btn_removeSelected:hover, .btn_undo:hover, .btn_removeAll:hover{
+	-fx-cursor: hand;
+}
+
+/* ########################  Footer  ##########################*/
+.btn_decrypt, .btn_attach, .btn_save_dec, .btn_encrypt, .btn_save_enc{
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-border-color: rgb(255, 255, 255);
+	-fx-border-width: 1 1 1 1;
+	-fx-padding: 2;
+	-fx-border-radius: 3 3 3 3;
+	-fx-font-family: 'Open Sans';
+	-fx-font-size: 13px;
+}
+
+.btn_decrypt:hover, .btn_attach:hover, .btn_save_dec:hover, .btn_encrypt:hover, .btn_save_enc:hover{
+	-fx-cursor: hand;
+  	-fx-border-color: rgb(2, 150, 10);
 }

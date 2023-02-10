@@ -77,10 +77,6 @@ public class MainView
 		
 		/*############### Application Title ###############*/
 		txt_title = new Label("Privacy Locker");
-		//Set text color.
-		//txt_title.setTextFill(Color.web("#eae0de"));
-		//Set font name, format and size.
-		txt_title.setFont(Font.font("Amble CN", FontWeight.BOLD, 18));
 		//Set CSS class name.
 		txt_title.getStyleClass().add("txt_title");
 		//Make the text to be wrapped meaning extra text is pushed into new line.
@@ -127,8 +123,6 @@ public class MainView
 		fileContainer= new ListView<Label>();		
 		fileContainer.setPrefSize(300, 100);
 		fileContainer.getStyleClass().add("fileContainer");
-		
-		panel_body.getStyleClass().add("fileContainer");
 		
 		ScrollPane scrollPane = new ScrollPane();
 		panel_body.getStyleClass().add("scrollPane");

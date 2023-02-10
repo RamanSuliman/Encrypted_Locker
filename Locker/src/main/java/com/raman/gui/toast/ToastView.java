@@ -3,6 +3,7 @@ package com.raman.gui.toast;
 import com.raman.fxfunctions.ButtonService;
 import com.raman.fxfunctions.WindowService;
 
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -74,11 +75,11 @@ public class ToastView extends Stage
 		WindowService.dragableWindow(this, pane);
 		
 		/*############### Default Message Type Icon ###############*/
-		ic_info = new Image("com.raman.gui/icons/info.png");
+		ic_info = new Image("com.raman.gui/icons/info_logo.png");
 		icon = new ImageView(ic_info);
 		//Set width and height, if not define using setPreserveRatio() display image in original size.
-		icon.setFitHeight(35);
-		icon.setFitWidth(35);
+		icon.setFitHeight(32);
+		icon.setFitWidth(32);
 		icon.setPreserveRatio(true);
 		//Centre the icon vertically.
 		BorderPane.setAlignment(icon, Pos.CENTER);
@@ -86,16 +87,12 @@ public class ToastView extends Stage
 		
 		/*############### Default Message Title ###############*/
 		txt_title = new Label("Error");
-		//Set text color.
-			//txt_title.setTextFill(Color.web("#eae0de"));
-		//Set font name, format and size.
-		txt_title.setFont(Font.font("Amble CN", FontWeight.BOLD, 18));
 		//Set CSS class name.
 		txt_title.getStyleClass().add("txt_title");
 		//Make the text to be wrapped meaning extra text is pushed into new line.
 		txt_title.setWrapText(true);
 		//Set max width for the text.
-		txt_title.setMaxWidth(180);
+		txt_title.setMaxWidth(185);
 		//Position the text in the middle.
 		txt_title.setAlignment(Pos.CENTER);
 		pane.setCenter(txt_title);
@@ -129,16 +126,10 @@ public class ToastView extends Stage
 		/*############### Default Message Title ###############*/
 		txt_message = new Label("In this area the message body is written with maximum number of charachters"
 				+ "up to 500 and minmium of 1.");
-		//Set text color.
-		txt_message.setTextFill(Color.web("#0076a3"));
-		//Set font name, format and size.
-		txt_message.setFont(Font.font("Amble CN", FontWeight.BOLD, 12));
 		//Set CSS class name.
 		txt_message.getStyleClass().add("txt_message");
 		//Make the text to be wrapped meaning extra text is pushed into new line.
 		txt_message.setWrapText(true);
-		//Set txt_message width for the text.
-		  //txt_message.setMaxWidth(180);
 		//Position the text in the middle.
 		txt_message.setAlignment(Pos.CENTER);
 		txt_message.setCursor(Cursor.TEXT);
@@ -158,7 +149,7 @@ public class ToastView extends Stage
         footer_panel.setSpacing(10);
         footer_panel.getStyleClass().add("footer_panel");
         footer_panel.setAlignment(Pos.CENTER);
-		footer_panel.setPadding(new Insets(10, 0 , 10, 0));
+		footer_panel.setPadding(new Insets(10, 0 , 0, 0));
         
         // Create some buttons to assist in selection
 		btn_ok = new Button("OK");

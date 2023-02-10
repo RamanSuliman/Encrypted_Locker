@@ -210,7 +210,7 @@ public class MainController implements EventHandler<ActionEvent>
 						String title = "";
 						if(encryptionController.removeProtection(decryptedLoadedFile, path))
 						{
-							title = "Decryption Completed!";
+							title = "Decryption Completed";
 							message = "Privacy is now lifted and files can be found in the chosen folder.";
 						}
 						else
@@ -258,8 +258,8 @@ public class MainController implements EventHandler<ActionEvent>
 					if(!encryptionController.hasUserReachedMaxNumberOfPasswordAttempts())
 					{
 						title = "Password Incorrect";
-						message = "Password given is not valid, number of attempts left is " + 
-                                encryptionController.getNumberOfPasswordAttempts()+ "."; 
+						message = "An invalid credtional is given, please try again and remember " + 
+                                encryptionController.getNumberOfPasswordAttempts()+ " attempts remained."; 
 						buttonType = ToastButton.RERTRY;
 					}else{
 						title = "Unreachable Solution!";
