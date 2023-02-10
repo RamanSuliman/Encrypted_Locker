@@ -17,13 +17,14 @@ import encryption.symmetric.PasswordEncryption;
 
 public class EncryptionController  
 {
-	public final static String encryptedFileName = "raman.encrypted";
+	public final static String encryptedFileName = System.getProperty("user.home") + "\\raman.encrypted";
 	private int passwordAttempts = 5;
 	private ProgressMeasure callback;
 	
 	public EncryptionController(ProgressMeasure callback)
 	{
 		this.callback = callback;
+		System.out.println(encryptedFileName);
 	}
 	
 	public boolean encryptFiles(ArrayList<File> files)
@@ -76,6 +77,9 @@ public class EncryptionController
 			sourceStream.close();
 		}catch (IOException e) {
 			e.printStackTrace();
+			return false;
+		}catch(SecurityException ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		return true;
