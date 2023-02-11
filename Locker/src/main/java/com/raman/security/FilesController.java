@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -14,7 +15,8 @@ import javafx.stage.Stage;
 public class FilesController 
 {
 	private ArrayList<File> files;
-	private File lastDeletedFile;
+	//LinkeHashMap is used to matian the order because it will act like a stack.
+	private Stack<File> stackList;
 	private Stage stage;
 	private FileChooser fileChooser;
 	
@@ -22,6 +24,7 @@ public class FilesController
 	{
 		this.stage = stage;
 		files = new ArrayList<File>();
+		stackList = new Stack<File>();
 		fileChooser = new FileChooser();
 		//In case the 
 		removeFile();
@@ -65,9 +68,8 @@ public class FilesController
 	{
 		if(files.isEmpty() || index > files.size() - 1 || index < 0)
 			return;
-		//Assign last deleted file before removing it from the list.
-		lastDeletedFile = files.get(index);
-		System.out.println("File to be removed:" + lastDeletedFile.getName());
+		//Append the removed file into the stack list.
+		stackList.add(files.get(index));
 		files.remove(index);
 	}
 	
@@ -77,18 +79,29 @@ public class FilesController
 			files.clear();
 	}
 	
-	public void undo(int index)
+	public void undo()
 	{
-		if(index > files.size() - 1 || index < 0 || getLastDeletedFile().getName() == null)
+		if(getLastDeletedFile().getName() == null)
 			return;
 		//This will add the file at given position and shift the elements up without replacing.
-		System.out.println("File:" + getLastDeletedFile().getName());
-		files.add(index, getLastDeletedFile());
+		files.add(getLastDeletedFile());
+		removeLastFile();
 	}
 	
 	public File getLastDeletedFile()
 	{
-		return lastDeletedFile;
+		//Remove and return the last file.
+		return stackList.lastElement();
+	}
+	
+	private void removeLastFile()
+	{
+		stackList.pop();
+	}
+	
+	public boolean isStackEmpty()
+	{
+		return stackList.isEmpty();
 	}
 	
 	public boolean saveEncryptedFile()
@@ -190,6 +203,6 @@ public class FilesController
 		if (file.delete())
 		    System.out.println(file.getName() + " is deleted!");
 		else
-		    System.out.println("Delete operation is failed.");
+		    System.out.println("Delete operation file is failed.");
 	}
 }

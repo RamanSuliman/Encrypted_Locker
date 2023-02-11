@@ -24,7 +24,6 @@ public class EncryptionController
 	public EncryptionController(ProgressMeasure callback)
 	{
 		this.callback = callback;
-		System.out.println(encryptedFileName);
 	}
 	
 	public boolean encryptFiles(ArrayList<File> files)

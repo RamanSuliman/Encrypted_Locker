@@ -2,6 +2,7 @@ package com.raman.FileProtector;
 
 import java.io.File;
 import com.raman.fxfunctions.ButtonService;
+import com.raman.fxfunctions.WindowService;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,14 +16,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class MainView
 {
@@ -34,7 +32,7 @@ public class MainView
 	private VBox box_encrypt, box_decypt, panel_footer;
 	private HBox box_decrypt_panel;
 	private ProgressBar progressBar;
-	protected Button btn_minimise, btn_close, btn_encrypt, btn_decrypt, btn_save_enc;
+	protected Button btn_minimise, btn_close, btn_encrypt, btn_decrypt, btn_save_enc, btn_help;
 	protected Button btn_removeAll, btn_removeSelected, btn_loadFiles, btn_undo, btn_attach;
 	protected ListView<Label> fileContainer;
 	
@@ -96,6 +94,7 @@ public class MainView
 		icon.setPreserveRatio(true);
 		//Centre the icon vertically.
 		BorderPane.setAlignment(icon, Pos.CENTER);
+		WindowService.assignHoverMessage(icon, "R.Security | 2023");
 		panel_header.setLeft(icon);
 		
 		return panel_header;
@@ -115,8 +114,11 @@ public class MainView
 		
 		// Remove All Button
 		btn_removeAll = ButtonService.getButtonWithIcon("btn_removeAll", 30, 30, eventHandler);
+		WindowService.assignHoverMessage(btn_removeAll, "Remove all files.");
 		// Remove Selected File Button
 		btn_removeSelected = ButtonService.getButtonWithIcon("btn_removeSelected", 30, 30, eventHandler);
+		WindowService.assignHoverMessage(btn_removeSelected, "Remove selected file.");
+
 		left_container.getChildren().addAll(btn_removeAll, btn_removeSelected);
 		
 				/*############### File Container ###############*/
@@ -143,8 +145,10 @@ public class MainView
 		
 		// Remove All Button
 		btn_loadFiles = ButtonService.getButtonWithIcon("btn_loadFiles", 30, 30, eventHandler);
+		WindowService.assignHoverMessage(btn_loadFiles, "Load files from the system.");
 		// Remove Selected File Button
 		btn_undo = ButtonService.getButtonWithIcon("btn_undo", 30, 30, eventHandler);
+		WindowService.assignHoverMessage(btn_undo, "Undelete last file.");
 		right_container.getChildren().addAll(btn_loadFiles, btn_undo);
 				
 		panel_body.getChildren().addAll(left_container, scrollPane, right_container);
@@ -177,26 +181,39 @@ public class MainView
 		return panel_footer;
 	}
 
-	private VBox setEncryptBox()
+	private Node setEncryptBox()
 	{
+		BorderPane paner = new BorderPane();	
+	
 		box_encrypt = new VBox();
 		box_encrypt.setAlignment(Pos.CENTER);
 		box_encrypt.getStyleClass().add("box_encrypt");
-
+		box_encrypt.setStyle("-fx-padding: 0 17 0 0");
+		
 		btn_encrypt = ButtonService.getButton(80, 20, "Encrypt", "btn_encrypt", eventHandler);
-
+		WindowService.assignHoverMessage(btn_encrypt, "Initiate encryption over selected files.");
+		
 		btn_save_enc = ButtonService.getButton(80, 20, "Save", "btn_save_enc", eventHandler);
+		WindowService.assignHoverMessage(btn_save_enc, "Save the cipher file at the chosen path.");
 		isEncryptionComplete(false);
 		
 		box_encrypt.getChildren().addAll(btn_encrypt, btn_save_enc);
 		
-		return box_encrypt;
+		paner.setLeft(getHelpButton());
+		paner.setCenter(box_encrypt);
+		
+		return paner;
 	}
 	
-	private VBox setDecryptBox()
+	private Node setDecryptBox()
 	{
+		//Main holder for the container of "task buttons and load message) and help button.
+		BorderPane paner = new BorderPane();
+		
+		//The container of "task buttons and load message)
 		box_decypt = new VBox();
 		box_decypt.getStyleClass().add("box_decypt");
+		box_decypt.setStyle("-fx-padding: 0 15 0 0");
 		box_decypt.setSpacing(4);
 		box_decypt.setAlignment(Pos.CENTER);
 		
@@ -208,8 +225,11 @@ public class MainView
 		
 		//Preparing buttons
 		btn_attach = ButtonService.getButton(80, 20, "Attach", "btn_attach", eventHandler);
+		WindowService.assignHoverMessage(btn_decrypt, "Attach the cipher file from the system.");
+		
 		btn_decrypt = ButtonService.getButton(80, 20, "Decrypt", "btn_decrypt", eventHandler);
 		btn_decrypt.setDisable(true);
+		WindowService.assignHoverMessage(btn_decrypt, "Initiate decryption over load cipher file.");
 		
 		//Add buttons to the horizontal panel box
 		box_decrypt_panel.getChildren().addAll(btn_attach, btn_decrypt);
@@ -219,7 +239,14 @@ public class MainView
 		
 		box_decypt.getChildren().addAll(txt_file_loaded, box_decrypt_panel);
 		
-		return box_decypt;
+		//Place the help button in the bottom left corner.
+		paner.setLeft(getHelpButton());
+		BorderPane.setAlignment(btn_help, Pos.BOTTOM_LEFT);
+		
+		//Assign the rest in the center.
+		paner.setCenter(box_decypt);
+		
+		return paner;
 	}
 	
 	protected void isEncryptionComplete(boolean isDone)
@@ -269,13 +296,12 @@ public class MainView
 		fileContainer.getItems().remove(index);
 	}
 	
-	protected void undo(int index, File file)
+	protected void undo(File file)
 	{
-		if(file == null || index > fileContainer.getItems().size() - 1 || index < 0)
+		if(file == null)
 			return;
 		//This will add the file at given position and shift the elements up without replacing.
-		System.out.println("File list name:" + file.getName());
-		fileContainer.getItems().add(index, new Label(file.getName()));
+		fileContainer.getItems().add(new Label(file.getName()));
 	}
 	
 	protected void setLoadedFileText(String name)
@@ -321,5 +347,16 @@ public class MainView
 	{
 		Node bodyPanel = root.getChildren().get(1);
 		ButtonService.setButtonVisibilty(bodyPanel, false);
+	}
+	
+	private Node getHelpButton()
+	{
+		btn_help = ButtonService.getButtonWithIcon("btn_help", 22, 22, eventHandler);
+		return btn_help;
+	}
+	
+	protected String getTaskType()
+	{
+		return (box_encrypt == null)? "decrpt": "encrypt";
 	}
 }

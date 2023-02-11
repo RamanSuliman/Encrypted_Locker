@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.raman.FileProtector.prompt.initial.Prompt;
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
 import com.raman.gui.toast.Toast;
 import com.raman.gui.toast.Toast.ToastButton;
@@ -57,6 +58,11 @@ public class MainController implements EventHandler<ActionEvent>
 		return view.getScene();
 	}
 	
+	private Stage getStage()
+	{
+		return (Stage) view.getScene().getWindow();
+	}
+	
 	public void isEncrption(boolean isEncryption)
 	{
 		view.isEncrption(isEncryption);
@@ -108,14 +114,17 @@ public class MainController implements EventHandler<ActionEvent>
 				toast.showToastMessage("Missing Files", "Make sure files are loaded first prior proceeding with encryption.",
 						new ToastButton[]{ToastButton.OK});
 			}
-		}else if(view.btn_save_enc == button){
+		}else if(view.btn_save_enc == button)
+		{
 			if(fileController.saveEncryptedFile())
 				view.hideEncryptionSaveButton();
 
-		}else if(view.btn_loadFiles == button){
+		}else if(view.btn_loadFiles == button)
+		{
 			fileController.browseFiles();
 			addSelectedFilesToGUI();
-		}else if(view.btn_removeAll == button){
+		}else if(view.btn_removeAll == button)
+		{
 			view.fileContainer.getItems().clear();
 			fileController.removeAll();
 		}else if(view.btn_removeSelected == button){
@@ -127,18 +136,28 @@ public class MainController implements EventHandler<ActionEvent>
 				view.removeFileAt(indexOfSelectedItem);
 				fileController.removeFileAt(indexOfSelectedItem);
 			}
-		}else if(view.btn_undo == button){
-			view.undo(indexOfSelectedItem, fileController.getLastDeletedFile());
-			fileController.undo(indexOfSelectedItem);
-			//To prevent removing another item again after undoing last action.
-			indexOfSelectedItem = -1;
+		}else if(view.btn_undo == button)
+		{
+			//If there is a file in the removed stack list.
+			if(!fileController.isStackEmpty())
+			{
+				view.undo(fileController.getLastDeletedFile());
+				fileController.undo();
+				//To prevent removing another item again after undoing last action.
+				indexOfSelectedItem = -1;
+			}
+
 		}else if(view.btn_minimise == button)
 			((Stage) view.getScene().getWindow()).setIconified(true);
 		else if(view.btn_close == button){
 			Platform.exit();
 	        System.exit(0);
-		}else	
-		{
+		}else if(view.btn_help == button){
+			//Determine which help message to show
+			String taskType = view.getTaskType();
+			new Prompt().showHelpWindow(getStage(), taskType);
+		}
+		else{
 			//Define the details of the toast message.
 			toast.showToastMessage("Unsupported Event", "Something unusual occured, refer back to the developer...",
 					new ToastButton[]{ToastButton.OK});

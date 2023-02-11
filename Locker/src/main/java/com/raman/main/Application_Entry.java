@@ -24,7 +24,8 @@ public class Application_Entry extends Application
 		instance = this;
 		stage = primaryStage;
 		try 
-		{					
+		{			
+			
 			AccessController access = new AccessController(primaryStage);
 			
 			//Set up Stage
@@ -35,7 +36,8 @@ public class Application_Entry extends Application
 	        primaryStage.initStyle(StageStyle.TRANSPARENT);
 	        primaryStage.show();
 	        
-		/*	
+			
+	        /*
 			Prompt prompt = new Prompt();
 			
 			//Set up Stage
@@ -45,8 +47,8 @@ public class Application_Entry extends Application
 			primaryStage.getIcons().add(new Image("com.raman.gui/icons/logo.png"));
 	        primaryStage.initStyle(StageStyle.TRANSPARENT);
 	        primaryStage.show();
-	     
-	     */          
+	         */
+        
 	               
 	        /******  To centre screen must be called after .show() ******/
 	        WindowService.centreWindow(primaryStage);
