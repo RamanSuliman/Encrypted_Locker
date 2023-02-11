@@ -85,12 +85,15 @@
     -fx-image: url("/com.raman.gui/icons/ic_undo.png");
 }
 
-.btn_loadFiles,
-	 .btn_removeSelected, .btn_removeAll, .btn_minimise, .btn_undo {
+.btn_help .image-view{
+	-fx-image: url("/com.raman.gui/icons/help.png");
+}
+
+.btn_loadFiles, .btn_removeSelected, .btn_removeAll, .btn_minimise, .btn_undo, .btn_help{
 	-fx-background-color: transparent;
 }
 
-.btn_loadFiles:hover, .btn_removeSelected:hover, .btn_undo:hover, .btn_removeAll:hover{
+.btn_loadFiles:hover, .btn_removeSelected:hover, .btn_undo:hover, .btn_removeAll:hover, .btn_help:hover{
 	-fx-cursor: hand;
 }
 

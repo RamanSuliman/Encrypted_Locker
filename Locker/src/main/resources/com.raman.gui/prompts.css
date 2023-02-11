@@ -112,3 +112,47 @@
 .passwordField:hover{
   -fx-border-color: rgb(2, 150, 10);
 }
+
+/* ######################## Help Window ######################## */
+.root_help_message{
+	-fx-padding: 4;
+ 	-fx-background-color: rgba(68, 83, 115, 1);
+    -fx-border-color: rgba(89, 19, 32, 0.3);
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 15;
+}
+
+.txt_contact_developer{
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-font-family: 'Open Sans';
+	-fx-font-size: 20px;
+}
+
+.txt_email{
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-font-family: 'Open Sans';
+	-fx-font-size: 11px;
+}
+
+.txt_email:hover{
+  -fx-cursor: hand;
+  -fx-text-fill: rgb(136, 211, 192);
+}
+
+.btn_help_close:hover{
+  -fx-cursor: hand;
+  -fx-border-color: rgb(2, 150, 10);
+}
+
+.btn_help_close
+{
+	-fx-text-fill: rgb(255, 255, 255);
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-border-color: rgb(163, 213, 230);
+	-fx-border-width: 1 1 1 1;
+	-fx-padding: 3;
+	-fx-border-radius: 3 3 3 3;
+	-fx-font-family: 'Open Sans';
+	-fx-font-size: 13px;	
+}
