@@ -3,9 +3,12 @@ package com.raman.fxfunctions;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class WindowService 
 {
@@ -13,6 +16,7 @@ public class WindowService
 	private static double yOffset = 0;
 	// Get the screen size
 	private static Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+	
 	/***
 	 * Centre the program in the middle of the screen (MUST BE CALLED AFTER) .show() method.
 	 */
@@ -67,5 +71,11 @@ public class WindowService
             	stage.setY(event.getScreenY() - yOffset);
             }
         });
+	}
+	
+	public static void assignHoverMessage(Node btn, String message)
+	{
+		Tooltip tooltip = new Tooltip(message);
+		Tooltip.install(btn, tooltip);
 	}
 }
