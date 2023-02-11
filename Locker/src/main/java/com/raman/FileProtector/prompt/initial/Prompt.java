@@ -12,6 +12,7 @@ public class Prompt implements EventHandler<ActionEvent>
 {
 	private Inital_Window initialWindow;
 	private MainController root;
+	private HelpMessageView helpWindow;
 	
 	public Scene getInitialWindow()
 	{
@@ -22,10 +23,31 @@ public class Prompt implements EventHandler<ActionEvent>
 		return initialWindow.getScene();
 	}
 
+	public void showHelpWindow(Stage parentStage, String imageType)
+	{
+		helpWindow = new HelpMessageView(parentStage, this);
+		helpWindow.setHelpImage(imageType);
+		helpWindow.showAndWait();
+	}
+	
 	@Override
 	public void handle(ActionEvent event) 
 	{
 		Button button = (Button) event.getSource();
+		if(initialWindow != null)
+			InitiateWindowHandling(button);
+		if(helpWindow != null)
+			HelpWindowHandling(button);
+	}
+	
+	private void HelpWindowHandling(Button button)
+	{
+		if(button == helpWindow.btn_close)
+			helpWindow.close();
+	}
+	
+	private void InitiateWindowHandling(Button button)
+	{
 		Stage primairyStage = (Stage) initialWindow.getScene().getWindow();
 		String taskChosen = "Encrypt";
 		
