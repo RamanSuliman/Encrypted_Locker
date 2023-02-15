@@ -12,7 +12,7 @@
         <configuration>
           <release>18</release>
         </configuration>
-      </plugin>
+      </plugin>     
       <!-- Packaging the application into a native bundle such as .dmg, exe etc. 
 	  <plugin>
            <groupId>org.apache.maven.plugins</groupId>
@@ -38,4 +38,22 @@
         -->
     </plugins>
   </build>
+  
+  <dependencies>
+	  <dependency>
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	    <version>4.13.2</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>org.testfx</groupId>
+	    <artifactId>testfx-junit5</artifactId>
+	    <version>4.0.16-alpha</version>
+	</dependency>
+
+  </dependencies>
+  
+  
+  
 </project>
