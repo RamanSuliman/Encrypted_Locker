@@ -40,5 +40,27 @@ public class DataCompressor
 		}
 		return null;
 	}
-
+	
+	public static byte[] decompress_file(byte[] compressedData)
+	{
+        try {
+        	ByteArrayInputStream inputByteStream = new ByteArrayInputStream(compressedData);
+            GZIPInputStream decompressor = new GZIPInputStream(inputByteStream);
+            ByteArrayOutputStream outputByteStream = new ByteArrayOutputStream();
+            byte[] decompressionBuffer = new byte[4096];
+            int decompressedLength;
+            
+            while ((decompressedLength = decompressor.read(decompressionBuffer)) != -1)
+            	outputByteStream.write(decompressionBuffer, 0, decompressedLength);
+            
+            decompressor.close();
+            inputByteStream.close();
+            outputByteStream.close();
+            
+            return outputByteStream.toByteArray();
+        }catch (IOException e) {
+        	
+        }
+        return null;
+	}
 }
