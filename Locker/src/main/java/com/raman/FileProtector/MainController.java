@@ -192,7 +192,8 @@ public class MainController implements EventHandler<ActionEvent>
 					else
 					{
 						toast.getOKButton().setOnAction(e -> System.exit(0));
-						toast.showToastMessage("Task Failed", "The encryption task faced an issue prior completion, please try again later.",
+						toast.showToastMessage("Task Failed", "The encryption task faced an issue prior completion, please try again later"
+								+ " or make sure all files are available on the device, not just in the cloud.",
 								new ToastButton[]{ToastButton.OK});
 					}
 				}

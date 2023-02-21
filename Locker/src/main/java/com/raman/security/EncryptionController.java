@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.raman.FileProtector.ProgressMeasure;
 import com.raman.FileProtector.prompt.password.PasswordPromptController;
+import com.raman.fxfunctions.DataCompressor;
 
 import encryption.symmetric.PasswordEncryption;
 
@@ -29,34 +30,29 @@ public class EncryptionController
 	public boolean encryptFiles(ArrayList<File> files)
 	{
 		int numberOfFilesEncrypted = 0;
-		FileInputStream inputStream = null;
-		byte[] inputBytes;
+		byte[] fileBytes;
 		Map<String, byte[]> cipherFiles = new HashMap<>();
 		// Create a task to simulate file decryption
 		for(File file : files)
 		{
-			try {
-				inputStream = new FileInputStream(file);
-				//Declare an array of the file size.
-				inputBytes = new byte[(int) file.length()];
-				//Load file bytes into the array.
-			    inputStream.read(inputBytes);
-			    //Fed the bytes of cipher and file name and  into the map.
-			    byte[] decrypted = feedBytesToEncryption(inputBytes);
-			    //Close the file.
-			    inputStream.close();
-			    //If decrypted is null then user password is wrong.
-			    if(decrypted == null)
-			    	return false;
-			    cipherFiles.put(file.getName(), decrypted);
-			    callback.onProgressUpdate(++numberOfFilesEncrypted, "encrypt");
-			} catch (IOException e) {
-				e.printStackTrace();
+			//Compress the file and get its bytes.
+			fileBytes = DataCompressor.compress_file(file);		    
+			
+			if(fileBytes == null)
+				continue;
+			
+			//Fed the bytes of cipher and file name and into the map.
+			byte[] decrypted = feedBytesToEncryption(fileBytes);
+
+			//If decrypted is null then user password is wrong.
+			if(decrypted == null)
 				return false;
-			}
+			
+			cipherFiles.put(file.getName(), decrypted);
+			callback.onProgressUpdate(++numberOfFilesEncrypted, "encrypt");
 		} 
 		
-		System.out.println(cipherFiles.size());
+		System.out.println("Number of encrypted files: " + cipherFiles.size());
 		
 		try {
 			FileOutputStream sourceStream = new FileOutputStream(encryptedFileName);
@@ -139,18 +135,23 @@ public class EncryptionController
 		            break;
 		        }
 
-		        // read the ciphertext size
+		        // Read the ciphertext size
 		        int ciphertextSize = reader.readInt();
 
-		        // read the ciphertext
+		        // Read the ciphertext
 		        byte[] inputBytes = new byte[ciphertextSize];
 		        reader.read(inputBytes);
-
-		        //decrypt the file
+		        
+		        // Decrypt the file
 				byte[] outputBytes = PasswordEncryption.decryptFile(inputBytes, PasswordPromptController.password);
+
+		        //Decompress the file
+				outputBytes = DataCompressor.decompress_file(outputBytes);
+				
 				//Null means password is wrong
 				if(outputBytes == null)
 					return false;
+				
 		        //write the decrypted bytes to the file
 		        FileOutputStream outputStream = new FileOutputStream(folderSavePath + "\\" + fileName);
 		        outputStream.write(outputBytes);
@@ -179,3 +180,62 @@ public class EncryptionController
 		return passwordAttempts;
 	}
 }
+/*
+	public boolean encryptFiles(ArrayList<File> files)
+	{
+		int numberOfFilesEncrypted = 0;
+		FileInputStream inputStream = null;
+		byte[] inputBytes;
+		Map<String, byte[]> cipherFiles = new HashMap<>();
+		// Create a task to simulate file decryption
+		for(File file : files)
+		{
+			try {
+				inputStream = new FileInputStream(file);
+				//Declare an array of the file size.
+				inputBytes = new byte[(int) file.length()];
+				//Load file bytes into the array.
+			    inputStream.read(inputBytes);
+			    //Fed the bytes of cipher and file name and  into the map.
+			    byte[] decrypted = feedBytesToEncryption(inputBytes);
+			    //Close the file.
+			    inputStream.close();
+			    //If decrypted is null then user password is wrong.
+			    if(decrypted == null)
+			    	return false;
+			    cipherFiles.put(file.getName(), decrypted);
+			    callback.onProgressUpdate(++numberOfFilesEncrypted, "encrypt");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} 
+		
+		System.out.println(cipherFiles.size());
+		
+		try {
+			FileOutputStream sourceStream = new FileOutputStream(encryptedFileName);
+			DataOutputStream writer = new DataOutputStream(sourceStream);
+			// write the file name and the ciphertext to the single output file
+			// Iterating HashMap through for loop
+			for(Map.Entry<String, byte[]> ciphers: cipherFiles.entrySet())
+			{
+				//Write file name
+				writer.writeUTF(ciphers.getKey());
+				//Write file size
+				writer.writeInt(ciphers.getValue().length);
+				//Write cipher bytes.
+				writer.write(ciphers.getValue());
+			}
+			writer.close();
+			sourceStream.close();
+		}catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}catch(SecurityException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+ */
